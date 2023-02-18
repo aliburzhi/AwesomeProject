@@ -4,15 +4,13 @@ import {useContext} from "react";
 import themeContext from "../config/themeContext";
 
 const PostView = styled.View(({theme}) => {
-
-
 	return css`
-	flex-direction: row;
-	padding: 15px;
-	border-bottom-width: 1px;
-	border-bottom-color: ${theme.color};
-	border-bottom-style: solid;
-`;
+		flex-direction: row;
+		padding: 15px;
+		border-bottom-width: 1px;
+		border-bottom-color: ${theme.color};
+		border-bottom-style: solid;
+	`;
 
 })
 const PostImage = styled.Image`
@@ -35,7 +33,7 @@ const PostDetails = styled.View`
 const PostDate = styled.Text`
 	font-size: 12px;
 	margin-top: 2px;
-	color: rgba(0,0,0, 0.4);
+	color: rgba(0, 0, 0, 0.4);
 `;
 
 const truncateTitle = (str) => {
@@ -51,13 +49,16 @@ const truncateTitle = (str) => {
 export const Post = ({title, imageUrl, createdAt, style}) => {
 	const theme = useContext(themeContext)
 	return (
-	<PostView theme={theme} >
-		<PostImage
-			source={{ uri: imageUrl}}
-		/>
-		<PostDetails>
-			<PostTitle style={{backgroundColor: style.background, color: style.color}}>{truncateTitle(title)}</PostTitle>
-			<PostDate style={{backgroundColor: style.background, color: style.color}}>{new Date(createdAt).toLocaleDateString()}</PostDate>
-		</PostDetails>
-	</PostView>)
-	}
+		<PostView theme={theme}>
+			<PostImage
+				source={{uri: imageUrl}}
+			/>
+			<PostDetails>
+				<PostTitle style={{backgroundColor: style.background, color: style.color}}>{truncateTitle(title)}</PostTitle>
+				<PostDate style={{
+					backgroundColor: style.background,
+					color: style.color
+				}}>{new Date(createdAt).toLocaleDateString()}</PostDate>
+			</PostDetails>
+		</PostView>)
+}
