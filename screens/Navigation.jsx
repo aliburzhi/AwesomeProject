@@ -6,6 +6,7 @@ import {EventRegister} from "react-native-event-listeners";
 import {useEffect, useState} from "react";
 import themeContext from "../config/themeContext";
 import theme from "../config/theme";
+
 const Stack = createNativeStackNavigator();
 
 export const Navigation = () => {
@@ -15,8 +16,8 @@ export const Navigation = () => {
 		let eventListener = EventRegister.addEventListener(
 			"changeTheme",
 			(data) => {
-			setMode(data);
-		});
+				setMode(data);
+			});
 		return () => {
 			EventRegister.removeEventListener(eventListener)
 		}
@@ -24,12 +25,12 @@ export const Navigation = () => {
 
 	return (
 		<themeContext.Provider value={mode === true ? theme.dark : theme.light}>
-		<NavigationContainer>
-			<Stack.Navigator>
-				<Stack.Screen name="Home" component={HomeScreen} options={{title: 'Новости'}} />
-				<Stack.Screen name="FullPost" component={FullPostScreen} options={{title: 'Статья'}} />
-			</Stack.Navigator>
-		</NavigationContainer>
+			<NavigationContainer>
+				<Stack.Navigator>
+					<Stack.Screen name="Home" component={HomeScreen} options={{title: 'Новости'}}/>
+					<Stack.Screen name="FullPost" component={FullPostScreen} options={{title: 'Статья'}}/>
+				</Stack.Navigator>
+			</NavigationContainer>
 		</themeContext.Provider>
 	)
 }
