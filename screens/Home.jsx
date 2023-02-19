@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, {useContext, useState} from "react";
-import {Alert, Button, FlatList, RefreshControl, StyleSheet, Switch, Text, TouchableOpacity, View} from "react-native";
+import {Alert, Button, FlatList, RefreshControl, Switch, Text, TouchableOpacity, View} from "react-native";
 import {EventRegister} from "react-native-event-listeners";
 import styled from "styled-components/native";
 import {Post} from "../components/Post";
@@ -63,16 +63,6 @@ export const HomeScreen = ({navigation}) => {
 		return <Loading/>
 	}
 
-	const makeId = (length) => {
-		let result = '';
-		const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-		const charactersLength = characters.length;
-		for (let i = 0; i < length; i++) {
-			result += characters.charAt(Math.floor(Math.random() * charactersLength));
-		}
-
-		return result;
-	};
 	// const handleAddPost = async () => {
 	// 	if (text.trim().length > 1) {
 	// 		let today = new Date();
@@ -140,11 +130,4 @@ export const HomeScreen = ({navigation}) => {
 		</Wrapper>
 	);
 }
-const styles = StyleSheet.create({
-	input: {
-		height: 40,
-		margin: 12,
-		borderWidth: 1,
-		padding: 10,
-	},
-});
+
