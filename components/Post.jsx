@@ -2,6 +2,7 @@ import styled from 'styled-components/native'
 import {css} from "styled-components";
 import {useContext} from "react";
 import themeContext from "../config/themeContext";
+import {View} from "react-native";
 
 const PostView = styled.View(({theme}) => {
 	return css`
@@ -46,10 +47,10 @@ const truncateTitle = (str) => {
 	}
 }
 
-export const Post = ({title, imageUrl, createdAt, style}) => {
+export const Post = ({title, imageUrl, createdAt, style, children}) => {
 	const theme = useContext(themeContext)
 	return (
-		<PostView theme={theme}>
+		<PostView theme={theme} style={{display: 'flex'}}>
 			<PostImage
 				source={{uri: imageUrl}}
 			/>
@@ -60,5 +61,9 @@ export const Post = ({title, imageUrl, createdAt, style}) => {
 					color: style.color
 				}}>{new Date(createdAt).toLocaleDateString()}</PostDate>
 			</PostDetails>
-		</PostView>)
+			<View>
+				{children}
+			</View>
+		</PostView>
+	)
 }

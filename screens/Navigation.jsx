@@ -27,7 +27,7 @@ export const Navigation = () => {
 		<themeContext.Provider value={mode === true ? theme.dark : theme.light}>
 			<NavigationContainer>
 				<Stack.Navigator>
-					<Stack.Screen name="Home" component={HomeScreen} options={{title: 'Новости'}}/>
+					<Stack.Screen name="Home" component={HomeScreen} options={{title: 'Shopping List'}}/>
 					<Stack.Screen name="FullPost" component={FullPostScreen} options={{title: 'Статья'}}/>
 				</Stack.Navigator>
 			</NavigationContainer>

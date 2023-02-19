@@ -1,23 +1,13 @@
 import axios from "axios";
-import React, {useContext, useEffect} from "react";
-import {
-	Alert,
-	Button,
-	FlatList,
-	RefreshControl,
-	StyleSheet,
-	Switch,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	View
-} from "react-native";
+import React, {useContext, useState} from "react";
+import {Alert, Button, FlatList, RefreshControl, StyleSheet, Switch, Text, TouchableOpacity, View} from "react-native";
 import {EventRegister} from "react-native-event-listeners";
 import styled from "styled-components/native";
 import {Post} from "../components/Post";
 import themeContext from "../config/themeContext";
 import {Loading} from "../components/Loading";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AddPostModal} from "../components/modals/AddPostModal";
 
 
 const Wrapper = styled.View`
@@ -27,10 +17,10 @@ const Wrapper = styled.View`
 
 export const HomeScreen = ({navigation}) => {
 	const theme = useContext(themeContext)
-	const [isLoading, setIsLoading] = React.useState(false);
-	const [articles, setArticles] = React.useState([]);
-	const [mode, setMode] = React.useState(false);
-	const [text, onChangeText] = React.useState('');
+	const [isLoading, setIsLoading] = useState(false);
+	const [articles, setArticles] = useState([]);
+	const [mode, setMode] = useState(false);
+	const [modalActive, setModalActive] = useState(false);
 	const fetchPosts = () => {
 		setIsLoading(true)
 		Alert.alert('0 new articles');
@@ -65,12 +55,9 @@ export const HomeScreen = ({navigation}) => {
 			}
 		}
 
-		fetchData()
+		void fetchData()
 	}, [])
 
-	useEffect(() => {
-		console.log(articles)
-	}, [articles])
 
 	if (isLoading) {
 		return <Loading/>
@@ -86,47 +73,44 @@ export const HomeScreen = ({navigation}) => {
 
 		return result;
 	};
-	const handleAddPost = async () => {
-		if (text.trim().length > 1) {
-			let today = new Date();
-			let dd = String(today.getDate()).padStart(2, '0');
-			let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-			let yyyy = today.getFullYear();
-			today = mm + '/' + dd + '/' + yyyy;
-			const newPost = {
-				createdAt: today,
-				name: text,
-				avatar: "https://static.thenounproject.com/png/55168-200.png",
-				id: makeId(10),
-			}
-			await AsyncStorage.setItem('articles', JSON.stringify([newPost, ...articles]));
-			setArticles([newPost, ...articles])
-		} else {
-			Alert.alert("Please add title (min 2 symbols)")
-		}
+	// const handleAddPost = async () => {
+	// 	if (text.trim().length > 1) {
+	// 		let today = new Date();
+	// 		let dd = String(today.getDate()).padStart(2, '0');
+	// 		let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+	// 		let yyyy = today.getFullYear();
+	// 		today = mm + '/' + dd + '/' + yyyy;
+	// 		const newPost = {
+	// 			createdAt: today,
+	// 			name: text,
+	// 			avatar: "https://static.thenounproject.com/png/55168-200.png",
+	// 			id: makeId(10),
+	// 		}
+	// 		await AsyncStorage.setItem('articles', JSON.stringify([newPost, ...articles]));
+	// 		setArticles([newPost, ...articles])
+	// 	} else {
+	// 		Alert.alert("Please add title (min 2 symbols)")
+	// 	}
+	// }
+
+	const addPostModal = async (value) => {
+		await AsyncStorage.setItem('articles', JSON.stringify([value, ...articles]));
+		setArticles([value, ...articles])
 	}
 
+	const handleDeletePost = async (id) => {
+		console.log(id)
+		const jsonValue = await AsyncStorage.getItem('articles')
+		const articles = JSON.parse(jsonValue)
+		const newArticlesList = articles.filter((item) => item.id !== id);
+		await AsyncStorage.setItem('articles', JSON.stringify(newArticlesList));
+		setArticles(newArticlesList);
+	}
 
 	return (
 		<Wrapper style={[{backgroundColor: theme.background, color: theme.color}]}>
-			<TextInput
-				clearButtonMode="while-editing"
-				style={
-					[styles.input, {
-						backgroundColor: theme.background,
-						color: theme.color,
-						borderBottomColor: theme.color,
-						borderTopColor: theme.color,
-						borderLeftColor: theme.color,
-						borderRightColor: theme.color
-					}]
-				}
-				placeholder="Type Author name..."
-				placeholderTextColor={theme.color}
-				onChangeText={onChangeText}
-				value={text}
-			/>
-			<Button title="Add Post" onPress={handleAddPost}/>
+			<Button title="Add Post" onPress={() => setModalActive(true)}/>
+			<AddPostModal active={modalActive} setActive={setModalActive} onSubmit={addPostModal}/>
 			<Text style={[{color: theme.color}]}>Theme mode:</Text>
 			<View style={{display: 'flex', width: '100%', flexDirection: 'row'}}>
 				<Text>Light</Text>
@@ -141,8 +125,15 @@ export const HomeScreen = ({navigation}) => {
 				data={articles}
 				renderItem={({item}) => (
 					<TouchableOpacity onPress={() => navigation.navigate('FullPost', {id: item.id, name: item.name})}>
-						<Post style={{color: theme.color, background: theme.background}} title={item.name} imageUrl={item.avatar}
-									createdAt={item.createdAt}/>
+						<View>
+							<Post
+								style={{color: theme.color, background: theme.background}}
+								title={item.name}
+								imageUrl={item.avatar}
+								createdAt={item.createdAt}>
+								<Button title="Delete" onPress={() => handleDeletePost(item.id)}/>
+							</Post>
+						</View>
 					</TouchableOpacity>
 				)}
 			/>
